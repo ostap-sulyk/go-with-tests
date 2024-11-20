@@ -1,4 +1,4 @@
-package main
+package helloworld
 
 import "testing"
 
@@ -10,14 +10,14 @@ func TestHello(t *testing.T) {
 
 		assertCorrectMessege(t, got, want)
 	})
-	
+
 	t.Run("say 'Hello World' when an empty string is supplied", func(t *testing.T) {
 		got := Hello("", "")
 		want := "Hello, World"
 
 		assertCorrectMessege(t, got, want)
 	})
-	
+
 	t.Run("in Spanish", func(t *testing.T) {
 		name := "Elodie"
 		got := Hello(name, spanish)
