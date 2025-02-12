@@ -3,6 +3,7 @@ package mocking
 import (
 	"fmt"
 	"io"
+	"iter"
 	"time"
 )
 
@@ -22,11 +23,6 @@ type Sleeper interface {
 type SpySleeper struct{ Calls int }
 
 func (s *SpySleeper) Sleep() { s.Calls++ }
-
-// DefaultSleeper
-type DefaultSleeper struct{}
-
-func (d *DefaultSleeper) Sleep() { time.Sleep(1 * time.Second) }
 
 type SpyCountdownOperations struct{ Calls []string }
 
@@ -55,9 +51,19 @@ func (s *SpyTime) Sleep(duration time.Duration) {
 }
 
 func Countdown(out io.Writer, sleeper Sleeper) {
-	for i := countDownStart; i > 0; i-- {
+	for i := range countDownFrom(3) {
 		fmt.Fprintln(out, i)
 		sleeper.Sleep()
 	}
 	fmt.Fprintf(out, finalWord)
+}
+
+func countDownFrom(from int) iter.Seq[int] {
+	return func(yield func(int) bool) {
+		for i := from; i > 0; i-- {
+			if !yield(i) {
+				return
+			}
+		}
+	}
 }
